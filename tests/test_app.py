@@ -60,3 +60,19 @@ def test_update(client):
     # Assert that the other fields are still their original values
     assert c.first_name == first_name
     assert c.last_name == last_name
+
+
+def test_delete(client):
+    c = Contact(username='to delete', first_name='To', last_name='Delete')
+    db_session.add(c)
+    db_session.commit()
+
+    # `c` should be a deleted object by the end of this test,
+    # so grab hold of the id here:
+    contact_id = c.id
+
+    r = client.delete(f'/contact/{contact_id}')
+    assert r.status_code == 200
+
+    q = Contact.query.filter_by(id=contact_id)
+    assert q.count() == 0

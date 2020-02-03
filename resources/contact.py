@@ -74,3 +74,9 @@ class ContactResource(Resource):
 
         contact = Contact.query.get(contact_id)
         return contact
+
+    def delete(self, contact_id):
+        db_session.query(Contact).filter_by(id=contact_id).delete()
+        db_session.commit()
+
+        return {'message': f'Contact with id {contact_id} deleted.'}
