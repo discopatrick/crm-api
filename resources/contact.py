@@ -80,3 +80,7 @@ class ContactResource(Resource):
         db_session.commit()
 
         return {'message': f'Contact with id {contact_id} deleted.'}
+
+    @marshal_with(contact_fields)
+    def get(self):
+        return Contact.query.all()

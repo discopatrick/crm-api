@@ -76,3 +76,15 @@ def test_delete(client):
 
     q = Contact.query.filter_by(id=contact_id)
     assert q.count() == 0
+
+
+def test_list(client):
+    for username in ('one', 'two', 'three'):
+        c = Contact(username=username, first_name=username, last_name=username)
+        db_session.add(c)
+    db_session.commit()
+
+    r = client.get('/contact')
+
+    assert r.status_code == 200
+    assert len(r.json) == 3
