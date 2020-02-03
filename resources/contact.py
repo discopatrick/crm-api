@@ -1,4 +1,4 @@
-from flask_restful import fields, reqparse, Resource, marshal_with
+from flask_restful import fields, reqparse, Resource, marshal_with, abort
 
 from database import db_session
 from exceptions import ContactUsernameAlreadyExistsException
@@ -48,6 +48,14 @@ contact_patch_parser.add_argument(
     store_missing=False,
 )
 
+contact_get_parser = reqparse.RequestParser()
+contact_get_parser.add_argument(
+    'username', dest='username',
+    location='args', required=False,
+    help="The contact's username: {error_msg}",
+    store_missing=False,
+)
+
 
 class ContactResource(Resource):
     @marshal_with(contact_fields)
@@ -83,4 +91,12 @@ class ContactResource(Resource):
 
     @marshal_with(contact_fields)
     def get(self):
-        return Contact.query.all()
+        kwargs = contact_get_parser.parse_args()
+        if 'username' in kwargs:
+            username = kwargs['username']
+            c = Contact.query.filter_by(username=username).one_or_none()
+            if not c:
+                abort(404, message=f"Contact {username} doesn't exist")
+            return c
+        else:
+            return Contact.query.all()

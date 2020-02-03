@@ -88,3 +88,23 @@ def test_list(client):
 
     assert r.status_code == 200
     assert len(r.json) == 3
+
+
+def test_find(client):
+    username_to_find = unique()
+    c = Contact(username=username_to_find, first_name='first', last_name='last')
+    db_session.add(c)
+    db_session.commit()
+
+    r = client.get(f'/contact?username={username_to_find}')
+
+    assert r.status_code == 200
+    assert r.json.get('username') == username_to_find
+
+
+def test_find_non_existent_returns_404(client):
+    non_existent_username = unique()
+
+    r = client.get(f'/contact?username={non_existent_username}')
+
+    assert r.status_code == 404
