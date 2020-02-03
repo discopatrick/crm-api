@@ -2,8 +2,7 @@ from sqlite3 import IntegrityError
 
 from sqlalchemy import Column, Integer, String
 
-from database import Base, db_session
-from exceptions import ContactUsernameAlreadyExistsException
+from database import Base
 
 
 class Contact(Base):
