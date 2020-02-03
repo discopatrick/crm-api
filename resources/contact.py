@@ -1,6 +1,7 @@
 from flask_restful import fields, reqparse, Resource, marshal_with
 
 from database import db_session
+from exceptions import ContactUsernameAlreadyExistsException
 from models import Contact
 
 contact_fields = {
@@ -34,5 +35,12 @@ class ContactResource(Resource):
         kwargs = contact_post_parser.parse_args()
         contact = Contact(**kwargs)
         db_session.add(contact)
-        db_session.commit()
+        try:
+            db_session.commit()
+        # Should really catch sqlite.IntegrityError here but
+        # doing so skips the except block...
+        except Exception:
+            db_session.rollback()
+            raise ContactUsernameAlreadyExistsException
+
         return contact

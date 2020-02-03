@@ -1,6 +1,9 @@
+from sqlite3 import IntegrityError
+
 from sqlalchemy import Column, Integer, String
 
-from database import Base
+from database import Base, db_session
+from exceptions import ContactUsernameAlreadyExistsException
 
 
 class Contact(Base):
