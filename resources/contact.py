@@ -28,6 +28,26 @@ contact_post_parser.add_argument(
     help="The contact's last name: {error_msg}"
 )
 
+contact_patch_parser = reqparse.RequestParser()
+contact_patch_parser.add_argument(
+    'username', dest='username',
+    location='form', required=False,
+    help="The contact's username: {error_msg}",
+    store_missing=False,
+)
+contact_patch_parser.add_argument(
+    'first_name', dest='first_name',
+    location='form', required=False,
+    help="The contact's first name: {error_msg}",
+    store_missing=False,
+)
+contact_patch_parser.add_argument(
+    'last_name', dest='last_name',
+    location='form', required=False,
+    help="The contact's last name: {error_msg}",
+    store_missing=False,
+)
+
 
 class ContactResource(Resource):
     @marshal_with(contact_fields)
@@ -43,4 +63,14 @@ class ContactResource(Resource):
             db_session.rollback()
             raise ContactUsernameAlreadyExistsException
 
+        return contact
+
+    @marshal_with(contact_fields)
+    def patch(self, contact_id):
+        kwargs = contact_patch_parser.parse_args()
+
+        db_session.query(Contact).filter_by(id=contact_id).update(kwargs)
+        db_session.commit()
+
+        contact = Contact.query.get(contact_id)
         return contact
