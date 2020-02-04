@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+from werkzeug.datastructures import MultiDict
+
 from database import db_session
 from models import Contact
 
@@ -31,6 +33,37 @@ def test_duplicate_username_returns_409(client):
     ))
 
     assert r.status_code == 409
+
+
+def test_add_with_emails(client):
+    # We need to post duplicate keys for 'email'
+    # (just as a web form or any other HTTP POST might do),
+    # thus we need a MultiDict.
+    # TODO: make endpoints accept JSON payloads instead?
+    # (Then we could post multiples as lists)
+
+    data = MultiDict()
+    data.add('username', 'new_contact_with_emails')
+    data.add('first_name', 'New Contact')
+    data.add('last_name', 'With Emails')
+
+    email1 = f'{unique()}@localhost'
+    email2 = f'{unique()}@localhost'
+
+    # add two emails
+    data.add('email', email1)
+    data.add('email', email2)
+
+    r = client.post('/contact', data=data)
+    assert r.status_code == 200
+
+    all_contacts = Contact.query.all()
+    assert len(all_contacts) == 1
+
+    c = Contact.query.first()
+    assert len(c.emails) == 2
+    assert c.emails[0].email_address == email1
+    assert c.emails[1].email_address == email2
 
 
 def test_update(client):

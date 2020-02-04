@@ -2,7 +2,7 @@ from flask_restful import fields, reqparse, Resource, marshal_with, abort
 
 from database import db_session
 from exceptions import ContactUsernameAlreadyExistsException
-from models import Contact
+from models import Contact, Email
 
 contact_fields = {
     'id': fields.Integer,
@@ -26,6 +26,14 @@ contact_post_parser.add_argument(
     'last_name', dest='last_name',
     location='form', required=True,
     help="The contact's last name: {error_msg}"
+)
+contact_post_parser.add_argument(
+    'email', dest='email',
+    location='form', required=False,
+    # Not required; contacts may be posted without email addresses
+    help="The contact's email addresses: {error_msg}",
+    action='append',
+    # append, because there could be multiple 'email' args
 )
 
 contact_patch_parser = reqparse.RequestParser()
@@ -61,6 +69,9 @@ class ContactResource(Resource):
     @marshal_with(contact_fields)
     def post(self):
         kwargs = contact_post_parser.parse_args()
+        if 'email' in kwargs:
+            addresses = kwargs.pop('email')
+
         contact = Contact(**kwargs)
         db_session.add(contact)
         try:
@@ -70,6 +81,12 @@ class ContactResource(Resource):
         except Exception:
             db_session.rollback()
             raise ContactUsernameAlreadyExistsException
+
+        if addresses:
+            for address in addresses:
+                contact.emails.append(Email(email_address=address))
+            db_session.add(contact)
+            db_session.commit()
 
         return contact
 
