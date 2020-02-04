@@ -11,7 +11,7 @@ class Contact(Base):
     username = Column(String(50), unique=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
-    emails = relationship('Email')
+    emails = relationship('Email', cascade='all, delete-orphan')
 
 
 class Email(Base):

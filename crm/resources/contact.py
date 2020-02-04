@@ -108,7 +108,8 @@ class ContactResource(Resource):
         return contact
 
     def delete(self, contact_id):
-        db_session.query(Contact).filter_by(id=contact_id).delete()
+        c = db_session.query(Contact).filter_by(id=contact_id).one_or_none()
+        db_session.delete(c)  # Use `db_session.delete` to ensure a cascade delete
         db_session.commit()
 
         return {'message': f'Contact with id {contact_id} deleted.'}

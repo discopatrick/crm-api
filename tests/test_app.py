@@ -111,6 +111,30 @@ def test_delete(client):
     assert q.count() == 0
 
 
+def test_delete_cascade(client):
+    c = Contact(username='delete and cascade', first_name='Delete', last_name='Cascade')
+    e = Email(email_address='delete.cascade@localhost')
+    c.emails = [e]
+    db_session.add(c)
+    db_session.commit()
+
+    # We'll need to expunge the session to test if objects truly are removed from the db,
+    # so grab their ids now:
+    contact_id = c.id
+    email_id = e.id
+
+    r = client.delete(f'/contact/{contact_id}')
+    assert r.status_code == 200
+
+    db_session.expunge_all()
+
+    q = Contact.query.filter_by(id=contact_id)
+    assert q.count() == 0
+
+    q = Email.query.filter_by(id=email_id)
+    assert q.count() == 0
+
+
 def test_list(client):
     for username in ('one', 'two', 'three'):
         c = Contact(username=username, first_name=username, last_name=username)
