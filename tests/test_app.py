@@ -2,8 +2,8 @@ from uuid import uuid4
 
 from werkzeug.datastructures import MultiDict
 
-from database import db_session
-from models import Contact, Email
+from crm.database import db_session
+from crm.models import Contact, Email
 
 
 def unique():

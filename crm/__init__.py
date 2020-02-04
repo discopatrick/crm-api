@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import Api
 
-from database import db_session
-from exceptions import api_errors
-from resources.contact import ContactResource
+from crm.database import db_session
+from crm.exceptions import api_errors
+from crm.resources.contact import ContactResource
 
 app = Flask(__name__)
 api = Api(app, errors=api_errors)

@@ -1,7 +1,7 @@
 import pytest
 
-from app import app as flask_app
-from database import init_db, empty_db
+from crm import app as flask_app
+from crm.database import init_db, empty_db
 
 
 @pytest.fixture

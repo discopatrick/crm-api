@@ -1,8 +1,8 @@
 from flask_restful import fields, reqparse, Resource, marshal_with, abort
 
-from database import db_session
-from exceptions import ContactUsernameAlreadyExistsException
-from models import Contact, Email
+from crm.database import db_session
+from crm.exceptions import ContactUsernameAlreadyExistsException
+from crm.models import Contact, Email
 
 email_fields = {
     'id': fields.Integer,

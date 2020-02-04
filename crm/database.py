@@ -13,10 +13,8 @@ Base.query = db_session.query_property()
 
 
 def init_db():
-    import models
     Base.metadata.create_all(bind=engine)
 
 
 def empty_db():
-    import models
     Base.metadata.drop_all(bind=engine)

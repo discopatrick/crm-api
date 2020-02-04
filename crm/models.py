@@ -1,9 +1,7 @@
-from sqlite3 import IntegrityError
-
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from database import Base
+from crm.database import Base
 
 
 class Contact(Base):
