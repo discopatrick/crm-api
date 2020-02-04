@@ -4,11 +4,18 @@ from database import db_session
 from exceptions import ContactUsernameAlreadyExistsException
 from models import Contact, Email
 
+email_fields = {
+    'id': fields.Integer,
+    'email_address': fields.String,
+    'contact_id': fields.Integer,
+}
+
 contact_fields = {
     'id': fields.Integer,
     'username': fields.String,
     'first_name': fields.String,
     'last_name': fields.String,
+    'emails': fields.Nested(email_fields),
 }
 
 contact_post_parser = reqparse.RequestParser()

@@ -3,7 +3,7 @@ from uuid import uuid4
 from werkzeug.datastructures import MultiDict
 
 from database import db_session
-from models import Contact
+from models import Contact, Email
 
 
 def unique():
@@ -121,6 +121,21 @@ def test_list(client):
 
     assert r.status_code == 200
     assert len(r.json) == 3
+
+
+def test_list_with_emails(client):
+    for username in ('one', 'two', 'three'):
+        c = Contact(username=username, first_name=username, last_name=username)
+        e = Email(email_address=f'{username}@localhost')
+        c.emails.append(e)
+        db_session.add(c)
+    db_session.commit()
+
+    r = client.get('/contact')
+
+    assert r.status_code == 200
+    assert len(r.json) == 3
+    assert len(r.json[0]['emails']) == 1
 
 
 def test_find(client):
