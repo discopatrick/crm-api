@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 
 from crm.database import Base
@@ -12,6 +12,7 @@ class Contact(Base):
     first_name = Column(String(50))
     last_name = Column(String(50))
     emails = relationship('Email', cascade='all, delete-orphan')
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class Email(Base):
