@@ -1,3 +1,4 @@
 *.pyc
 .idea
 *.sqlite
+celerybeat-schedule.db
