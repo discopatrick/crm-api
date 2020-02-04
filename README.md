@@ -10,6 +10,8 @@
   ```
 * Run redis with `docker run -d -p 6379:6379 redis`
 * Run celery with `celery -A tasks worker --loglevel=info -B` (remember to add `-B` so celerybeat also runs)
+* Set `FLASK_APP=crm`
+* Run `python -m flask run`
 
 ## To test:
 
